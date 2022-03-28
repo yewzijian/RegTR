@@ -1,0 +1,106 @@
+general:
+    expt_name: regtr_regressCoor
+
+dataset:
+    dataset: 3dmatch
+    root: '../data/indoor'
+    augment_noise: 0.005
+    perturb_pose: small
+    train_batch_size: 2
+    val_batch_size: 2
+    test_batch_size: 1
+    overlap_radius: 0.0375  # Distance below which points will be considered to be overlapping
+
+train_options:
+    niter: -70  # Actually just need 40-50 epochs.
+
+solver:
+    optimizer: AdamW
+    base_lr: 0.0001
+    weight_decay: 0.0001
+    grad_clip: 0.1
+    scheduler: 'step'
+    scheduler_param: [205860, 0.5]  # Decay by 0.5 every 20 epochs
+
+
+# Use the same processing or backbone as Predator
+kpconv_options:
+    num_layers: 4
+    neighborhood_limits: [40, 40, 40, 40]
+    aggregation_mode: sum
+    first_subsampling_dl: 0.025
+    first_feats_dim: 128
+    fixed_kernel_points: center
+    in_feats_dim: 1
+    in_points_dim: 3
+    conv_radius: 2.5
+    deform_radius: 5.0
+    KP_extent: 2.0
+    KP_influence: linear
+    overlap_radius: 0.0375
+    use_batch_norm: True
+    batch_norm_momentum: 0.02
+    modulated: False
+    num_kernel_points: 15
+    architecture: ['simple',
+                   'resnetb',
+                   'resnetb_strided',
+                   'resnetb',
+                   'resnetb',
+                   'resnetb_strided',
+                   'resnetb',
+                   'resnetb',
+                   'resnetb_strided',
+                   'resnetb',
+                   'resnetb']
+
+
+model:
+    model: regtr.RegTR
+
+    # Transformer
+    attention_type: dot_prod
+    nhead: 8
+    d_embed: 256
+    d_feedforward: 1024
+    dropout: 0.0
+    pre_norm: True
+    transformer_act: relu
+
+    # Transformer encoder
+    num_encoder_layers: 6
+    transformer_encoder_has_pos_emb: True
+    sa_val_has_pos_emb: True
+    ca_val_has_pos_emb: True
+    pos_emb_type: sine  # either 'sine' or 'learned'
+
+    # Correspondence decoding
+    corr_decoder_has_pos_emb: True
+    direct_regress_coor: True  # Whether to regress coordinates using MLP (True) or a final attention layer (False)
+
+
+losses:
+    # Overlap loss
+    wt_overlap: 1.0
+    overlap_loss_pyr: 3
+    overlap_loss_on: [5]  # Apply loss on only final output
+
+    # Feature loss - I use the following thresholds
+    # Voxel sizes at different octaves: (0) 0.025, (1) 0.05, (2) 0.1, (3) 0.2
+    # r_p and r_n are set to 1x and 2.0x the voxel sizes respectively
+    wt_feature: 0.1
+    wt_feature_un: 0.0
+    r_p: 0.2
+    r_n: 0.4
+    feature_loss_on: [5]
+    feature_loss_type: infonce
+
+    # Correspondence loss
+    wt_corr: 1.0
+    corr_loss_on: [5]
+
+
+validation:
+    # Registration success criteria. We use this to pick the best checkpoint
+    reg_success_thresh_rot: 10
+    reg_success_thresh_trans: 0.1

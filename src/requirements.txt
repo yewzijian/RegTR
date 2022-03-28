@@ -1,0 +1,12 @@
+coloredlogs
+easydict
+h5py
+GitPython
+nibabel
+numpy
+scipy
+open3d
+tensorboard
+vtk==9.0.3
+
+# Also install pytorch, pytorch3d, and Minkowski Engine

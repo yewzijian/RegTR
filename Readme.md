@@ -87,7 +87,7 @@ You can download our trained models [here](https://github.com/yewzijian/RegTR/re
 We provide a simple demo script `demo.py` that loads our model and checkpoints, registers 2 point clouds, and visualizes the result. Simply download the pretrained models and run the following from the `src/` directory:
 
 ```bash
-python demo.py --example 0  # choose from 0 - 6 (see code for details)
+python demo.py --example 0  # choose from 0 - 4 (see code for details)
 ```
 
 Press 'q' to end the visualization and exit. Refer the documentation for `visualize_result()` for explanation of the visualization.

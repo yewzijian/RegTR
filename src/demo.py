@@ -50,7 +50,7 @@ _examples = [
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--example', type=int, default=0,
-                    help=f'Example pair to run (between 0 and {len(_examples) - 1}')
+                    help=f'Example pair to run (between 0 and {len(_examples) - 1})')
 parser.add_argument('--threshold', type=float, default=0.5,
                     help='Controls viusalization of keypoints outside overlap region.')
 opt = parser.parse_args()
